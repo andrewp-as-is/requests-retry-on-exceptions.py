@@ -7,9 +7,10 @@ import ssl
 import time
 
 import requests
+import requests.exceptions as exceptions
 
 BACKOFF_FACTOR = 0.1
-EXCEPTIONS = (
+RETRY_EXCEPTIONS = (
     http.client.IncompleteRead,
     requests.exceptions.ChunkedEncodingError,
     requests.exceptions.ConnectionError,
@@ -34,7 +35,7 @@ class Retry:
     def __init__(self, func, **kwargs):
         self.func = func
         self.backoff_factor = kwargs.get('backoff_factor', BACKOFF_FACTOR)
-        self.exceptions = kwargs.get('exceptions', EXCEPTIONS)
+        self.exceptions = kwargs.get('exceptions', RETRY_EXCEPTIONS)
         self.retries = kwargs.get('retries', RETRIES)
 
     def run(self, *args, **kwargs):
